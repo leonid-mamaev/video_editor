@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <h1>Leo's Video Editor</h1>
+    <ul>
+    {% for item in videos %}
+        <li>
+            <a href="{{ url_for('play', file_name=item) }}">{{ item }}</a>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

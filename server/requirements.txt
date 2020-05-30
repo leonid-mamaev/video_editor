@@ -1,0 +1,8 @@
+flask
+flask-cors
+werkzeug
+boto3
+moviepy
+requests
+pydub
+ffprobe

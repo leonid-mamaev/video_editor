@@ -1,0 +1,42 @@
+version: '3.5'
+
+services:
+  server:
+    build:
+      context: ./server
+    restart: always
+    container_name: video_editor_server
+    volumes:
+      - ./server/src:/usr/src/app/src
+    ports:
+      - 8000:8000
+    environment:
+      - PYTHONPATH=/usr/src/app
+      - DEBUG=yes
+      - PORT=8000
+    networks:
+      - video_editor
+
+  client:
+    stdin_open: true
+    build:
+      context: ./client
+#      args:
+#        REACT_APP_SERVER_URL: http://docs-manager.sandboxinsided.com:8000
+    restart: always
+    container_name: video_editor_client
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_SERVER_URL=http://127.0.0.1:8000
+      - TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling  # Important to lower the cpu load on ts files watch.
+    volumes:
+      - ./client:/usr/src/app
+    ports:
+      - 3000:3000
+    command: 'bash -c "npm install && npm start"'  # Have to run npm install again to have node_modules for IDE.
+    networks:
+      - video_editor
+
+networks:
+  video_editor:
+    name: video_editor
