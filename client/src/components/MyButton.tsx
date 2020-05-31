@@ -6,7 +6,7 @@ type Props = {
     text?: string
     title?: string
     color?: 'green' | 'red' | 'grey'
-    icon?: 'check' | 'trash' | 'close'
+    icon?: 'check' | 'trash' | 'close' | string
     size?: 'mini' | 'tiny' | 'small'
     children?: ReactNode
 }

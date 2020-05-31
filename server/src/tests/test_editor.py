@@ -98,9 +98,9 @@ class TestEditor(TestBase):
 
     def test_resize_video(self):
         self.editor.resize_video(
-            source=self.storage.generate_file_path('t_video5945077835449239268.mp4'),
+            source=self.storage.generate_file_path('guitar_ESP.mp4'),
             destination=self.storage.generate_file_path('resized.mp4'),
-            scale=0.3
+            width=320
         )
 
     def test_crop_video(self):

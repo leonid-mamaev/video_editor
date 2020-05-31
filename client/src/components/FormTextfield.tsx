@@ -9,6 +9,7 @@ type Props = {
     size?: 'mini' | 'small'
     icon?: 'filter'
     autofocus?: boolean
+    loading?: boolean
 }
 
 type State = {
@@ -22,7 +23,8 @@ export default class FormTextfield extends React.Component<Props, State> {
 
     static defaultProps = {
         isFluid: true,
-        size: 'small'
+        size: 'small',
+        loading: false
     }
 
     componentDidMount(): void {
@@ -39,6 +41,7 @@ export default class FormTextfield extends React.Component<Props, State> {
                 placeholder={this.props.placeholder}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => this.props.onChange(data.value)}
                 size={this.props.size}
+                loading={this.props.loading}
                 icon={this.props.icon}/>
         )
     }

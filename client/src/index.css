@@ -15,7 +15,14 @@ body {
   float: right;
 }
 
+.mainMenu {
+  padding: 0!important;
+  margin: 0!important;
+}
+
 .wave-form-chart-container {
+  height: 276px;
+  overflow: hidden;
 }
 .wave-form-chart {
   position: relative;
@@ -27,4 +34,35 @@ body {
   height: 260px;
   width: 1px;
   background: #d7d9db;
+}
+
+.list-media-files {
+  padding-left: 10px!important;
+}
+.list-media-files button {
+  float: right;
+}
+
+.mainMenu {
+  border-radius: 0!important;
+}
+
+.toolBelt.menu {
+  margin: 0!important;
+  padding: 0!important;
+}
+
+.uploadFile {
+  margin-left: 10px;
+}
+
+.grid .row {
+  padding: 0!important;
+}
+.grid .column {
+  padding-top: 10px!important;
+}
+
+.mediaNameHeader {
+  cursor: pointer;
 }

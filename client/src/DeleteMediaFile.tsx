@@ -10,22 +10,19 @@ type Props = {
 class DeleteMediaFile extends React.Component<Props> {
 
     submit() {
-      const data = {
-        'names': [this.props.name]
-      }
-      axios.post("http://127.0.0.1:8000/api/remove", data, {})
-      .then(res => {
-          console.log(res.statusText)
-          this.props.onSuccess()
-      })
+        const data = {
+            'names': [this.props.name]
+        }
+        axios.post('http://127.0.0.1:8000/api/remove', data)
+        .then(res => {
+            this.props.onSuccess()
+        })
     }
 
     render() {
-      return (
-          <div>
+        return (
             <ButtonDelete onClick={this.submit.bind(this)} />
-          </div>
-      )
+        )
     }
 }
 

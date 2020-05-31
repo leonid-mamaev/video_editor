@@ -7,6 +7,6 @@ type Props = {
 
 export const ButtonDelete = ({onClick}: Props) => {
     return (
-        <MyButton icon='close' color='red' size='mini' onClick={onClick}/>
+        <MyButton icon='trash' size='mini' onClick={onClick}/>
     )
 }

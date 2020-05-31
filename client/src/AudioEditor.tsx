@@ -4,6 +4,7 @@ import {ButtonSubmit} from './components/ButtonSubmit'
 import axios from 'axios'
 import {MyButton} from './components/MyButton'
 import WaveFormChart from './components/WaveFormChart'
+import {TimeLine} from "./components/TimeLine";
 
 
 type Props = {
@@ -15,16 +16,20 @@ type State = {
     cutTo: string
     waveFormData: []
     playProgress: number
-    audioRef: RefObject<any>
 }
 
 class AudioEditor extends React.Component<Props, State> {
+    audioRef: RefObject<any>
     state: State = {
         cutFrom: '',
         cutTo: '',
         waveFormData: [],
         playProgress: 0,
-        audioRef: createRef()
+    }
+
+    constructor(props: Props) {
+        super(props)
+        this.audioRef = createRef()
     }
 
     componentDidMount() {
@@ -32,7 +37,7 @@ class AudioEditor extends React.Component<Props, State> {
     }
 
     componentWillUnmount() {
-        this.state.audioRef.current.pause()
+        this.audioRef.current.pause()
     }
 
     getAudioWaveForm() {
@@ -57,23 +62,23 @@ class AudioEditor extends React.Component<Props, State> {
     }
 
     play() {
-        this.state.audioRef.current.play()
+        this.audioRef.current.play()
     }
 
     pause() {
-        this.state.audioRef.current.pause()
+        this.audioRef.current.pause()
     }
 
     stop() {
-        this.state.audioRef.current.currentTime = 0
+        this.audioRef.current.currentTime = 0
     }
 
     onPlayUpdate() {
-        this.setState({playProgress: this.state.audioRef.current.currentTime})
+        this.setState({playProgress: this.audioRef.current.currentTime})
     }
 
     setPosition(position: number) {
-        this.state.audioRef.current.currentTime = position
+        this.audioRef.current.currentTime = position
     }
 
     render() {
@@ -84,16 +89,27 @@ class AudioEditor extends React.Component<Props, State> {
                 <WaveFormChart
                     onClick={this.setPosition.bind(this)}
                     highlightPosition={playProgress}
-                    totalTime={this.state.audioRef.current ? this.state.audioRef.current.duration : 0}
                     data={waveFormData} />
-                <audio onTimeUpdate={this.onPlayUpdate.bind(this)} ref={this.state.audioRef} autoPlay={false} controls={false}>
+                <audio onTimeUpdate={this.onPlayUpdate.bind(this)} ref={this.audioRef} autoPlay={false} controls={false}>
                     <source src={`http://127.0.0.1:8000/store/` + mediaName} type="audio/mp3" />
                 </audio>
-                <MyButton text='Play' onClick={this.play.bind(this)} />
-                <MyButton text='Pause' onClick={this.pause.bind(this)} />
-                <MyButton text='Stop' onClick={this.stop.bind(this)} />
-                <FormTextfield placeholder='From' value={cutFrom} onChange={value => this.setState({cutFrom: value})} />
-                <FormTextfield placeholder='To' value={cutTo} onChange={value => this.setState({cutTo: value})} />
+                <TimeLine
+                    time={playProgress}
+                    totalTime={this.audioRef.current ? this.audioRef.current.duration : 0} />
+                <MyButton text='Play' icon='play' onClick={this.play.bind(this)} />
+                <MyButton text='Pause' icon='pause' onClick={this.pause.bind(this)} />
+                <MyButton text='Stop' icon='stop' onClick={this.stop.bind(this)} />
+                <h3>Slice</h3>
+                <FormTextfield
+                    placeholder='From'
+                    isFluid={false}
+                    value={cutFrom}
+                    onChange={value => this.setState({cutFrom: value})} />
+                <FormTextfield
+                    placeholder='To'
+                    isFluid={false}
+                    value={cutTo}
+                    onChange={value => this.setState({cutTo: value})} />
                 <ButtonSubmit onClick={this.cut.bind(this)} />
             </div>
         )

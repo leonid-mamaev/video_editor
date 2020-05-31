@@ -4,6 +4,8 @@ import {ButtonSubmit} from "./components/ButtonSubmit";
 import axios from "axios";
 import WaveFormChart from "./components/WaveFormChart";
 import {MyButton} from "./components/MyButton";
+import {Grid} from "semantic-ui-react";
+import {TimeLine} from "./components/TimeLine";
 
 type Props = {
     mediaName: string
@@ -36,7 +38,6 @@ class VideoEditor extends React.Component<Props, State> {
         const data = {name: this.props.mediaName}
         axios.get('http://127.0.0.1:8000/api/get_video_wave_form', {params: data})
         .then(res => {
-            console.log(data)
             this.setState({waveFormData: res.data})
         })
     }
@@ -61,28 +62,51 @@ class VideoEditor extends React.Component<Props, State> {
         this.videoRef.current.currentTime = position
     }
 
+    onVideoClick() {
+        this.videoRef.current.paused ? this.videoRef.current.play() : this.videoRef.current.pause()
+    }
+
     render() {
         const { mediaName } = this.props
         const {waveFormData, playProgress} = this.state
         return (
-            <div>
-                <WaveFormChart
-                    onClick={this.setPosition.bind(this)}
-                    highlightPosition={playProgress}
-                    totalTime={this.videoRef.current ? this.videoRef.current.duration : 0}
-                    data={waveFormData} />
-                <video onTimeUpdate={this.onPlayUpdate.bind(this)} ref={this.videoRef} key={mediaName} autoPlay={false} controls={false} height="480">
-                    <source src={`http://127.0.0.1:8000/store/` + mediaName} type='video/mp4' />
-                </video>
-                {this.videoRef.current &&
-                    <div>Video Size: {this.videoRef.current.videoWidth}X{this.videoRef.current.videoHeight}</div>
-                }
-                <MyButton text='Play' onClick={this.play.bind(this)} />
-                <MyButton text='Pause' onClick={this.pause.bind(this)} />
-                <MyButton text='Stop' onClick={this.stop.bind(this)} />
-                <EditorCropVideo mediaName={mediaName} />
-                <EditorSliceVideo mediaName={mediaName} />
-            </div>
+            <Grid divided columns={2}>
+                <Grid.Row>
+                    <Grid.Column width={14}>
+                        <WaveFormChart
+                            onClick={this.setPosition.bind(this)}
+                            highlightPosition={playProgress}
+                            data={waveFormData} />
+                        {this.videoRef.current &&
+                        <div>
+                            Video Size: {this.videoRef.current.videoWidth}X{this.videoRef.current.videoHeight}
+                            <TimeLine
+                                time={playProgress}
+                                totalTime={this.videoRef.current ? this.videoRef.current.duration : 0} />
+                        </div>
+                        }
+                        <div className='controls'>
+                            <MyButton text='Play' icon='play' onClick={this.play.bind(this)} />
+                            <MyButton text='Pause' icon='pause' onClick={this.pause.bind(this)} />
+                            <MyButton text='Stop' icon='stop' onClick={this.stop.bind(this)} />
+                        </div>
+                        <video
+                            onTimeUpdate={this.onPlayUpdate.bind(this)}
+                            ref={this.videoRef}
+                            key={mediaName}
+                            autoPlay={false}
+                            width='100%'
+                            onClick={this.onVideoClick.bind(this)}
+                            controls={false}>
+                            <source src={`http://127.0.0.1:8000/store/` + mediaName} type='video/mp4' />
+                        </video>
+                    </Grid.Column>
+                    <Grid.Column width={2}>
+                        <EditorCropVideo mediaName={mediaName} />
+                        <EditorSliceVideo mediaName={mediaName} />
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
         )
     }
 }
@@ -130,7 +154,7 @@ class EditorCropVideo extends React.Component<CropProps, CropState> {
         if (isLoading) return 'Cropping...'
         return (
             <div>
-                <h3 onClick={this.toggle.bind(this)}>Crop</h3>
+                <MyButton onClick={this.toggle.bind(this)}>Crop</MyButton>
                 {this.state.toggle &&
                     <div>
                         <FormTextfield placeholder='X1' value={cropX1} onChange={value => this.setState({cropX1: value})}/>
@@ -188,7 +212,7 @@ class EditorSliceVideo extends React.Component<SliceProps, SliceState> {
         if (isLoading) return 'Slicing...'
         return (
             <div>
-                <h3 onClick={this.toggle.bind(this)}>Slice</h3>
+                <MyButton onClick={this.toggle.bind(this)}>Slice</MyButton>
                 {this.state.toggle &&
                     <div>
                         <FormTextfield placeholder='From' value={cutFrom} onChange={value => this.setState({cutFrom: value})}/>

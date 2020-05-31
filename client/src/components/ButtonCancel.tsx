@@ -9,8 +9,7 @@ type Props = {
 export const ButtonCancel = ({onClick, text = 'Cancel'}: Props) => {
     return (
         <MyButton
-            text={text}
-            icon='check'
+            icon='close'
             onClick={onClick}/>
     )
 }

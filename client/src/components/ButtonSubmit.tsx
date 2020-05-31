@@ -10,7 +10,6 @@ type Props = {
 export const ButtonSubmit = ({onClick, text = 'Submit', color = 'green'}: Props) => {
     return (
         <MyButton
-            text={text}
             color={color}
             icon='check'
             onClick={onClick}/>

@@ -16,7 +16,7 @@ class PlayMediaFile extends React.Component<Props> {
 
     render() {
       const { mediaName } = this.props
-      const is_video = mediaName.indexOf('mp3') == -1
+      const is_video = mediaName.indexOf('mp3') === -1
       return (
         <div>
             <RenameMediaFile onSuccess={this.props.onRename} mediaName={mediaName} />
@@ -35,14 +35,17 @@ type RenameMediaFileProps = {
 
 type RenameMediaFileState = {
     toggle: boolean
+    name: string
     newName: string
+    isLoading: boolean
 }
-
 
 class RenameMediaFile extends React.Component<RenameMediaFileProps, RenameMediaFileState> {
     state: RenameMediaFileState = {
         toggle: false,
-        newName: this.props.mediaName
+        name: this.props.mediaName,
+        newName: this.props.mediaName,
+        isLoading: false
     }
 
     toggle() {
@@ -58,21 +61,30 @@ class RenameMediaFile extends React.Component<RenameMediaFileProps, RenameMediaF
             'name': this.props.mediaName,
             'new_name': this.state.newName
         }
+        this.setState({isLoading: true})
         axios.post('http://127.0.0.1:8000/api/rename', data, {})
-            .then(res => {
-                this.props.onSuccess()
-            })
+        .then(res => {
+            this.props.onSuccess()
+            this.setState({toggle: false, name: this.state.newName, isLoading: false})
+        })
     }
 
     render() {
-      const { mediaName } = this.props
-      const { toggle, newName } = this.state
+      const { toggle, name, newName, isLoading } = this.state
       return (
         <div>
-            {!toggle && <Header as='h2' onClick={this.toggle.bind(this)}>{mediaName}</Header>}
+            {!toggle &&
+                <Header
+                    className='mediaNameHeader'
+                    title='Click to rename'
+                    as='h1'
+                    onClick={this.toggle.bind(this)}>
+                    {name}
+                </Header>
+            }
             {toggle &&
                 <div>
-                    <FormTextfield value={newName} onChange={this.onChange.bind(this)}/>
+                    <FormTextfield loading={isLoading} isFluid={false} value={newName} onChange={this.onChange.bind(this)}/>
                     <ButtonSubmit onClick={this.renameMediaFile.bind(this)} />
                     <ButtonCancel onClick={this.toggle.bind(this)} />
                 </div>
