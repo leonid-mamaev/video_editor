@@ -1,10 +1,11 @@
 import React from "react";
 import axios from 'axios'
-import {Grid, Menu} from 'semantic-ui-react'
+import {Menu} from 'semantic-ui-react'
 import ListMediaFiles from './ListMediaFiles'
 import PlayMediaFile from './PlayMediaFile'
 import EditorJoinVideos from './EditorJoinVideos'
 import EditorApplyAudioToVideo from './EditorApplyAudioToVideo'
+import {MyButton} from "./components/MyButton";
 
 type State = {
     selectedMedia: string
@@ -57,25 +58,36 @@ class MainPanel extends React.Component<{}, State> {
             <div>
                 <Menu className='toolBelt'>
                     <Menu.Item name='Tool Belt' />
-                    <Menu.Item name='Join Videos' />
-                    <Menu.Item name='Join Video and Sound' />
+                    <Menu.Item>
+                        <EditorJoinVideos mediaItems={mediaItems} onSuccess={this.refresh.bind(this)} />
+                    </Menu.Item>
+                    <Menu.Item>
+                        <EditorApplyAudioToVideo mediaItems={mediaItems} onSuccess={this.refresh.bind(this)} />
+                    </Menu.Item>
                 </Menu>
-                <Grid columns={2} divided className='mainPanel'>
-                    <Grid.Row>
-                        <Grid.Column width={selectorCollapsed ? 1 : 3}>
-                            <div className='selector-toggle' onClick={this.toggleSelector.bind(this)}>{selectorCollapsed ? 'Open' : 'Close'}</div>
-                            {!selectorCollapsed && <ListMediaFiles items={mediaItems} onSelect={this.selectMedia.bind(this)} onDelete={this.refresh.bind(this)} />}
-                            {/*<EditorJoinVideos onSuccess={this.refresh.bind(this)} />*/}
-                            {/*<EditorApplyAudioToVideo onSuccess={this.refresh.bind(this)} />*/}
-                        </Grid.Column>
-                        <Grid.Column width={selectorCollapsed ? 15 : 13}>
-                            {selectedMedia && <PlayMediaFile onRename={this.refresh.bind(this)} key={selectedMedia} mediaName={selectedMedia} /> }
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
+                <div className='mainPanel'>
+                    <div className={selectorCollapsed ? 'mediaList collapsed' : 'mediaList'}>
+                        <div className='mediaListToggle'>
+                            <MyButton
+                                size='mini'
+                                icon={selectorCollapsed ? 'caret right' : 'caret left'}
+                                onClick={this.toggleSelector.bind(this)} />
+                        </div>
+                        {!selectorCollapsed &&
+                            <ListMediaFiles
+                                items={mediaItems}
+                                onSelect={this.selectMedia.bind(this)}
+                                onDelete={this.refresh.bind(this)} />
+                        }
+                    </div>
+                    <div className='MediaFileView'>
+                        {selectedMedia && <PlayMediaFile onRename={this.refresh.bind(this)} key={selectedMedia} mediaName={selectedMedia} /> }
+                    </div>
+                </div>
             </div>
         )
     }
 }
+
 
 export default MainPanel

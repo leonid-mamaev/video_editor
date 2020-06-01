@@ -1,5 +1,8 @@
 import tempfile
 import wave
+
+from moviepy.video.VideoClip import ImageClip
+from moviepy.video.fx.fadeout import fadeout
 from numpy.core.records import ndarray
 from pydub import AudioSegment
 import numpy
@@ -78,7 +81,7 @@ class Editor:
         if width:
             video = video.resize(width=width)
         if height:
-            video = video.resize(width=width, height=height)
+            video = video.resize(height=height)
         video.write_videofile(destination)
 
     def crop_video(
@@ -92,6 +95,16 @@ class Editor:
     ) -> None:
         video = VideoFileClip(source)
         video = video.crop(x1=x1, x2=x2, y1=y1, y2=y2)
+        video.write_videofile(destination)
+
+    def image_to_video(self, image_path: str, destination: str, duration: float) -> None:
+        video = ImageClip(image_path)
+        video = video.set_duration(duration)
+        video.write_videofile(destination, fps=24)
+
+    def video_fade_out(self, source: str, destination: str, duration: float) -> None:
+        video = VideoFileClip(source)
+        video = fadeout(video, duration)
         video.write_videofile(destination)
 
 

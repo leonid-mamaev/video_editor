@@ -119,6 +119,17 @@ def apply_audio():
     return 'Done', 200
 
 
+@app.route('/api/resize_video', methods=['POST'])
+def resize_video():
+    editor.resize_video(
+        source=media_storage.generate_file_path(request.json['source']),
+        destination=media_storage.generate_file_path(request.json['destination']),
+        width=float(request.json['width']) if request.json['width'] else None,
+        height=float(request.json['height']) if request.json['height'] else None
+    )
+    return 'Done', 200
+
+
 @app.route('/api/join_videos', methods=['POST'])
 def join_videos():
     editor.join_videos(

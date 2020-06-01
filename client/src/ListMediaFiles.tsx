@@ -1,5 +1,5 @@
 import React from 'react'
-import {Header, Icon, List} from 'semantic-ui-react'
+import {Icon, List} from 'semantic-ui-react'
 import UploadMediaFile from './UploadMediaFile'
 import DeleteMediaFile from './DeleteMediaFile'
 

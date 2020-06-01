@@ -4,8 +4,11 @@ import {ButtonSubmit} from "./components/ButtonSubmit";
 import axios from "axios";
 import WaveFormChart from "./components/WaveFormChart";
 import {MyButton} from "./components/MyButton";
-import {Grid} from "semantic-ui-react";
 import {TimeLine} from "./components/TimeLine";
+import {ButtonCancel} from "./components/ButtonCancel";
+import FormLabelHorizontal from "./components/FormLabelHorizontal";
+import EditorVideoResize from "./EditorVideoResize";
+import MyModal from "./components/MyModal";
 
 type Props = {
     mediaName: string
@@ -70,43 +73,39 @@ class VideoEditor extends React.Component<Props, State> {
         const { mediaName } = this.props
         const {waveFormData, playProgress} = this.state
         return (
-            <Grid divided columns={2}>
-                <Grid.Row>
-                    <Grid.Column width={14}>
-                        <WaveFormChart
-                            onClick={this.setPosition.bind(this)}
-                            highlightPosition={playProgress}
-                            data={waveFormData} />
-                        {this.videoRef.current &&
-                        <div>
-                            Video Size: {this.videoRef.current.videoWidth}X{this.videoRef.current.videoHeight}
-                            <TimeLine
-                                time={playProgress}
-                                totalTime={this.videoRef.current ? this.videoRef.current.duration : 0} />
-                        </div>
-                        }
-                        <div className='controls'>
-                            <MyButton text='Play' icon='play' onClick={this.play.bind(this)} />
-                            <MyButton text='Pause' icon='pause' onClick={this.pause.bind(this)} />
-                            <MyButton text='Stop' icon='stop' onClick={this.stop.bind(this)} />
-                        </div>
-                        <video
-                            onTimeUpdate={this.onPlayUpdate.bind(this)}
-                            ref={this.videoRef}
-                            key={mediaName}
-                            autoPlay={false}
-                            width='100%'
-                            onClick={this.onVideoClick.bind(this)}
-                            controls={false}>
-                            <source src={`http://127.0.0.1:8000/store/` + mediaName} type='video/mp4' />
-                        </video>
-                    </Grid.Column>
-                    <Grid.Column width={2}>
-                        <EditorCropVideo mediaName={mediaName} />
-                        <EditorSliceVideo mediaName={mediaName} />
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid>
+            <div>
+                <WaveFormChart
+                    onClick={this.setPosition.bind(this)}
+                    highlightPosition={playProgress}
+                    data={waveFormData} />
+                {this.videoRef.current &&
+                <div>
+                    Video Size: {this.videoRef.current.videoWidth}X{this.videoRef.current.videoHeight}
+                    <TimeLine
+                        time={playProgress}
+                        totalTime={this.videoRef.current ? this.videoRef.current.duration : 0} />
+                </div>
+                }
+                <div className='controls'>
+                    <MyButton text='Play' icon='play' onClick={this.play.bind(this)} />
+                    <MyButton text='Pause' icon='pause' onClick={this.pause.bind(this)} />
+                    <MyButton text='Stop' icon='stop' onClick={this.stop.bind(this)} />
+                </div>
+                <div className='video-editor-controls'>
+                    <EditorCropVideo mediaName={mediaName} />
+                    <EditorSliceVideo mediaName={mediaName} />
+                    <EditorVideoResize mediaName={mediaName} onSuccess={() => {}} />
+                </div>
+                <video
+                    onTimeUpdate={this.onPlayUpdate.bind(this)}
+                    ref={this.videoRef}
+                    key={mediaName}
+                    autoPlay={false}
+                    onClick={this.onVideoClick.bind(this)}
+                    controls={false}>
+                    <source src={`http://127.0.0.1:8000/store/` + mediaName} type='video/mp4' />
+                </video>
+            </div>
         )
     }
 }
@@ -150,17 +149,32 @@ class EditorCropVideo extends React.Component<CropProps, CropState> {
     }
 
     render() {
+        const {mediaName} = this.props
         const {cropX1, cropX2, isLoading} = this.state
-        if (isLoading) return 'Cropping...'
         return (
             <div>
-                <MyButton onClick={this.toggle.bind(this)}>Crop</MyButton>
+                <MyButton icon='crop' text='Crop' onClick={this.toggle.bind(this)} />
                 {this.state.toggle &&
-                    <div>
-                        <FormTextfield placeholder='X1' value={cropX1} onChange={value => this.setState({cropX1: value})}/>
-                        <FormTextfield placeholder='X2' value={cropX2} onChange={value => this.setState({cropX2: value})}/>
-                        <ButtonSubmit onClick={this.crop.bind(this)}/>
-                    </div>
+                    <MyModal
+                        body={() => (
+                            <div>
+                                {isLoading && 'Cropping...'}
+                                <FormLabelHorizontal label='X1'>
+                                    <FormTextfield value={cropX1} onChange={value => this.setState({cropX1: value})}/>
+                                </FormLabelHorizontal>
+                                <FormLabelHorizontal label='X2'>
+                                    <FormTextfield value={cropX2} onChange={value => this.setState({cropX2: value})}/>
+                                </FormLabelHorizontal>
+                            </div>
+                        )}
+                        footer={() => (
+                            <div>
+                                <ButtonSubmit onClick={this.crop.bind(this)}/>
+                                <ButtonCancel onClick={this.toggle.bind(this)}/>
+                            </div>
+                        )}
+                        onClose={this.toggle.bind(this)}
+                        title={`Crop ${mediaName}`} />
                 }
             </div>
         )
@@ -208,17 +222,28 @@ class EditorSliceVideo extends React.Component<SliceProps, SliceState> {
     }
 
     render() {
+        const {mediaName} = this.props
         const {cutFrom, cutTo, isLoading} = this.state
-        if (isLoading) return 'Slicing...'
         return (
             <div>
-                <MyButton onClick={this.toggle.bind(this)}>Slice</MyButton>
+                <MyButton icon='hand scissors' text='Slice' onClick={this.toggle.bind(this)} />
                 {this.state.toggle &&
-                    <div>
-                        <FormTextfield placeholder='From' value={cutFrom} onChange={value => this.setState({cutFrom: value})}/>
-                        <FormTextfield placeholder='To' value={cutTo} onChange={value => this.setState({cutTo: value})}/>
-                        <ButtonSubmit onClick={this.slice.bind(this)}/>
-                    </div>
+                    <MyModal
+                        body={() => (
+                            <div>
+                                {isLoading && 'Slicing...'}
+                                <FormTextfield placeholder='From' value={cutFrom} onChange={value => this.setState({cutFrom: value})}/>
+                                <FormTextfield placeholder='To' value={cutTo} onChange={value => this.setState({cutTo: value})}/>
+                            </div>
+                        )}
+                        footer={() => (
+                            <div>
+                                <ButtonSubmit onClick={this.slice.bind(this)}/>
+                                <ButtonCancel onClick={this.toggle.bind(this)}/>
+                            </div>
+                        )}
+                        onClose={this.toggle.bind(this)}
+                        title={`Slice ${mediaName}`} />
                 }
             </div>
         )

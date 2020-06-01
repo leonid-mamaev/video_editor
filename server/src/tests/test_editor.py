@@ -60,14 +60,9 @@ class TestEditor(TestBase):
 
     def test_join_video(self):
         self.editor.join_videos(
-            video_1=self.storage.generate_file_path('test_1.mp4'),
-            video_2=self.storage.generate_file_path('test_1.mp4'),
+            video_1=self.storage.generate_file_path('Big Video2.mp4'),
+            video_2=self.storage.generate_file_path('Big Video2.mp4'),
             destination=self.storage.generate_file_path('test_video_joined.mp4'),
-        )
-        self.editor.apply_audio(
-            video_path=self.storage.generate_file_path('test_video_joined.mp4'),
-            audio_path=self.storage.generate_file_path('audio_cut.mp3'),
-            destination=self.storage.generate_file_path('test_super_cut.mp4'),
         )
 
     def test_slice_audio(self):
@@ -103,10 +98,31 @@ class TestEditor(TestBase):
             width=320
         )
 
+    def test_resize_video_to_youtube_standard(self):
+        self.editor.resize_video(
+            source=self.storage.generate_file_path('Big Video2.mp4'),
+            destination=self.storage.generate_file_path('resized.mp4'),
+            width=1080,
+        )
+
     def test_crop_video(self):
         self.editor.crop_video(
             source=self.storage.generate_file_path('20200529_152027.mp4'),
             destination=self.storage.generate_file_path('cropped.mp4'),
             x1=100,
             x2=-60
+        )
+
+    def test_image_to_video(self):
+        self.editor.image_to_video(
+            image_path=self.storage.generate_file_path('logo.jpg'),
+            destination=self.storage.generate_file_path('logo_video.mp4'),
+            duration=5
+        )
+
+    def test_video_fade_out(self):
+        self.editor.video_fade_out(
+            source=self.storage.generate_file_path('logo_video.mp4'),
+            destination=self.storage.generate_file_path('logo_video_fade_out.mp4'),
+            duration=2
         )

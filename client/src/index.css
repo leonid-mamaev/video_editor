@@ -19,6 +19,43 @@ body {
   padding: 0!important;
   margin: 0!important;
 }
+.mainPanel {
+  display: flex;
+}
+.mediaList {
+  padding: 10px 5px 0 0;
+  border-right: 1px solid rgba(34,36,38,.15);
+}
+.mediaList.collapsed {
+  width: 45px;
+  border-right: none;
+}
+.MediaFileView {
+  width: 100%;
+  padding: 10px;
+}
+.list-media-files {
+  padding-left: 10px!important;
+  width: 260px;
+}
+.list-media-files .button {
+  float: right;
+  display: none!important;
+}
+.list-media-files .item {
+  height: 33px;
+}
+.list-media-files .item:hover .button {
+  display: block!important;
+}
+.mediaListToggle {
+  float: right;
+}
+video {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+}
 
 .wave-form-chart-container {
   height: 276px;
@@ -35,14 +72,6 @@ body {
   width: 1px;
   background: #d7d9db;
 }
-
-.list-media-files {
-  padding-left: 10px!important;
-}
-.list-media-files button {
-  float: right;
-}
-
 .mainMenu {
   border-radius: 0!important;
 }
@@ -56,13 +85,11 @@ body {
   margin-left: 10px;
 }
 
-.grid .row {
-  padding: 0!important;
-}
-.grid .column {
-  padding-top: 10px!important;
-}
-
 .mediaNameHeader {
   cursor: pointer;
+}
+
+.video-editor-controls {
+  display: flex;
+  margin: 5px 0 5px 0;
 }
